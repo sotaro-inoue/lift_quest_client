@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "MoboBold";
+  src: url("./fonts/MOBO-Font/MOBO-Bold.otf") format("opentype")
+}
+
+@font-face {
+  font-family: "MoboExtraLight";
+  src: url("./fonts/MOBO-Font/MOBO-ExtraLight.otf") format("opentype")
+}
+
+@font-face{
+  font-family: "MoboRegular";
+  src: url("./fonts/MOBO-Font/MOBO-Regular.otf") format("opentype")
+}
+
+@font-face{
+  font-family: "MoboSemiBold";
+  src: url("./fonts/MOBO-Font/MOBO-SemiBold.otf") format("opentype")
+}
+
+:root {
+  --background: #11104f;
+  --foreground: #f5f2b0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #11104f;
+    --foreground: #f5f2b0;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
