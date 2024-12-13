@@ -39,7 +39,7 @@ body {
     --secondary: 180 25% 28%;
     --secondary-foreground: 57 78% 83%;
     --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted-foreground: 57,50%,83%;
     --accent: 241 66% 19% 83;
     --accent-foreground: 57 78% 83%;
     --destructive: 1 83% 42%;
@@ -52,7 +52,7 @@ body {
     --chart-3: 180 25% 28%;
     --chart-4: 12 98% 53%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 1rem
   }
   .dark {
     --background: 0 0% 3.9%;

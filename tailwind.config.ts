@@ -27,6 +27,7 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				'accent-color': '#365a5a',
+				'hover-color': '#e01725',
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
@@ -70,9 +71,17 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			zIndex: {
+				'-10': '-10',
 			}
 		}
 	},
+	variants: {
+        extend: {
+            textDecorationColor: ['hover'], 
+        },
+    },
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
