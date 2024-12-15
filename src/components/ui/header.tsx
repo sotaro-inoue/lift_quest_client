@@ -4,7 +4,7 @@ export function Header(){
     return(
         <div className="fixed top-0 left-0 w-full bg-backgrounds z-50 h-12">
             <div className="absolute top-0 left-10">
-                <h1 id="logo" className="font-mobobold text-left underline decoration-1 text-6xl">
+                <h1 id="logo" className="font-mobobold text-left underline decoration-2 text-6xl">
                     LQ
                 </h1>
             </div>
@@ -15,6 +15,9 @@ export function Header(){
                 </Button>
                 <Button className="bg-background text-foreground rounded-full px-3 py-1 text-sm hover:underline hover:decoration-2">
                     Sign Up
+                </Button>
+                <Button className="bg-background text-foreground rounded-full px-3 py-1 text-sm hover:underline hover:decoration-2">
+                    お問い合せ
                 </Button>
             </div>
         </div>
