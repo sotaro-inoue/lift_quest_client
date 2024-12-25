@@ -22,39 +22,34 @@ import { signUpSchema } from "@/lib/schemas"
 import { signUp } from '@/app/actions'
 import { Card, CardContent, CardDescription, CardHeader, CardFooter, CardTitle } from "@/components/ui/card"
 
-type FormData = z.infer<typeof signUpSchema>
+type SignUpFormData = z.infer<typeof signUpSchema>
 
 export function SignUpForm() {
     const [isLoading, setIsLoading] = useState(false)
     const [message, setMessage] = useState('')
     const router = useRouter()
 
-    const form = useForm<FormData>({
+    const form = useForm<SignUpFormData>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
             name: "",
-            user_id: "@",  // デフォルトで@を設定
+            user_id: "@",
             email: "",
             password: "",
         },
     })
 
-    async function onSubmit(data: FormData) {
+    async function onSubmit(data: SignUpFormData) {
         setIsLoading(true)
         setMessage('')
 
         try {
-            const formData = new FormData()
-            Object.entries(data).forEach(([key, value]) => {
-                formData.append(key, value)
-            })
-
-            const result = await signUp(formData)
+            const result = await signUp(data)
             if (result.success) {
                 setMessage('アカウントが作成されました')
                 router.push('/login')
             } else {
-                setMessage(result.message || 'エラーが発生しました')
+                setMessage(result.message || 'アカウント作成時にエラーが発生しました')
             }
         } catch (error: unknown) {
             console.error(error);
@@ -78,7 +73,7 @@ export function SignUpForm() {
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>お名前</FormLabel>
+                                    <FormLabel>ユーザーネーム</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
                                     </FormControl>
@@ -104,8 +99,8 @@ export function SignUpForm() {
                                                     const value = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
                                                     field.onChange(`@${value}`);
                                                 }}
-                                                className="rounded-l-none"
-                                                placeholder="username"
+                                                className="rounded-l-none placeholder:text-foreground/40"
+                                                placeholder="user_id"
                                             />
                                         </div>
                                     </FormControl>
@@ -120,7 +115,11 @@ export function SignUpForm() {
                                 <FormItem>
                                     <FormLabel>メールアドレス</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="email" />
+                                        <Input {...field} 
+                                                type="email"
+                                                className="placeholder:text-foreground/40"
+                                                placeholder="example@example.com"
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -148,7 +147,7 @@ export function SignUpForm() {
             <CardFooter className="flex flex-col space-y-4">
                 <p className="text-center text-sm">
                     アカウントをお持ちの場合は、
-                    <Link href="/login" className="text-primary hover:underline">
+                    <Link href="/login" className="font-bold underline">
                         こちらから
                     </Link>
                 </p>

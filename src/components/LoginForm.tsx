@@ -22,14 +22,14 @@ import { loginSchema } from "@/lib/schemas"
 import { login } from '@/app/actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 
-type FormData = z.infer<typeof loginSchema>
+type LoginFormData = z.infer<typeof loginSchema>
 
 export function LoginForm() {
     const [isLoading, setIsLoading] = useState(false)
     const [message, setMessage] = useState('')
     const router = useRouter()
 
-    const form = useForm<FormData>({
+    const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             identifier: "",
@@ -37,28 +37,23 @@ export function LoginForm() {
         },
     })
 
-    async function onSubmit(data: FormData) {
+    async function onSubmit(data: LoginFormData) {
         setIsLoading(true)
         setMessage('')
 
         try {
-            const formData = new FormData()
-            Object.entries(data).forEach(([key, value]) => {
-                formData.append(key, value)
-            })
-
-            const result = await login(formData)
+            const result = await login(data)
             if (result.success) {
                 setMessage('ログインしました')
                 if (result.authHeaders) {
                     localStorage.setItem('authHeaders', JSON.stringify(result.authHeaders))
                 }
-                router.push('/dashboard')
+                router.push(`/dashboard/${result.data.user_id}`)
             } else {
                 setMessage(result.message || 'ログインに失敗しました')
             }
-        } catch (error: unknown) {
-            console.error(error);
+        } catch (error) {
+            console.error(error)
             setMessage('エラーが発生しました')
         } finally {
             setIsLoading(false)
@@ -73,7 +68,12 @@ export function LoginForm() {
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit((data) => {
+                        onSubmit({
+                            identifier: data.identifier,
+                            password: data.password
+                        })
+                    })} className="space-y-6">
                         <FormField
                             control={form.control}
                             name="identifier"
@@ -88,7 +88,7 @@ export function LoginForm() {
                                         onChange={(e) => {
                                             field.onChange(e.target.value);
                                         }}
-                                        placeholder="@username または email@example.com"
+                                        placeholder="@user_id または email@example.com"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -117,7 +117,7 @@ export function LoginForm() {
             <CardFooter className="flex flex-col space-y-4 px-4 sm:px-6">
                 <p className="text-center text-sm">
                     アカウントをお持ちでない場合は、
-                    <Link href="/signup" className="text-primary hover:underline">
+                    <Link href="/signup" className="font-bold underline">
                         こちらから
                     </Link>
                     </p>

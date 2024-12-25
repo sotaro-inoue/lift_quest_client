@@ -2,41 +2,35 @@
 
 import { revalidatePath } from 'next/cache'
 import { signUpSchema, loginSchema } from '@/lib/schemas'
+import { z } from 'zod'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1'
 
-export async function signUp(formData: FormData) {
-  const result = signUpSchema.safeParse(Object.fromEntries(formData))
+export async function signUp(data: z.infer<typeof signUpSchema>) {
+  const result = signUpSchema.safeParse(data)
 
   if (!result.success) {
+    console.log('Validation error:', result.error);
     return { success: false, message: 'バリデーションエラー' }
   }
 
   const { name, user_id, email, password } = result.data
-
+  
   try {
     const response = await fetch(`${API_BASE_URL}/auth`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        registration: {
-          name: name,
-          user_id: user_id,
-          email: email,
-          password: password,
-          password_confirmation: password
-        }
-      }),
+      body: JSON.stringify({ name, user_id, email, password }),
     })
 
     const data = await response.json()
 
     if (!response.ok) {
-      return { 
-        success: false, 
-        message: data.errors?.join(', ') || 'アカウント作成に失敗しました' 
+      return {
+        success: false,
+        message: data.errors?.join(', ') || 'アカウント作成に失敗しました'
       }
     }
 
@@ -48,8 +42,8 @@ export async function signUp(formData: FormData) {
   }
 }
 
-export async function login(formData: FormData) {
-  const result = loginSchema.safeParse(Object.fromEntries(formData))
+export async function login(data: z.infer<typeof loginSchema>) {
+  const result = loginSchema.safeParse(data)
 
   if (!result.success) {
     return { success: false, message: 'バリデーションエラー' }
@@ -63,33 +57,29 @@ export async function login(formData: FormData) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email: identifier,
-        password: password
-      }),
+      body: JSON.stringify({ identifier, password }),
     })
 
-    const data = await response.json()
+    const responseData = await response.json()
 
     if (!response.ok) {
-      return { 
-        success: false, 
-        message: data.errors?.join(', ') || 'ログインに失敗しました' 
+      return {
+        success: false,
+        message: responseData.errors?.join(', ') || 'ログインに失敗しました'
       }
     }
 
-    // トークンを返す
     const authHeaders = {
       'access-token': response.headers.get('access-token'),
       'client': response.headers.get('client'),
       'uid': response.headers.get('uid'),
     }
 
-    revalidatePath('/login')
-    return { 
-      success: true, 
+    return {
+      success: true,
       message: 'ログインしました',
-      authHeaders 
+      authHeaders,
+      data: responseData.data
     }
   } catch (error) {
     console.error('Login error:', error)
